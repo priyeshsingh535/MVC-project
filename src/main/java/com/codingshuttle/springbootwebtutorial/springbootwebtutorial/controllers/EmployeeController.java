@@ -2,6 +2,8 @@ package com.codingshuttle.springbootwebtutorial.springbootwebtutorial.controller
 
 
 import com.codingshuttle.springbootwebtutorial.springbootwebtutorial.dto.EmployeeDTO;
+import com.codingshuttle.springbootwebtutorial.springbootwebtutorial.entities.EmployeeEntity;
+import com.codingshuttle.springbootwebtutorial.springbootwebtutorial.repositories.EmployeeRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -12,28 +14,32 @@ import java.util.Map;
 @RequestMapping(path = "/employees")
 public class EmployeeController {
 
-//    @GetMapping(path = "/getSecretMessage")
+    private EmployeeRepository employeeRepository;
+
+    public EmployeeController(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
+    }
+    //    @GetMapping(path = "/getSecretMessage")
 //    public String getMySuperSecretMessage() {
 //        return "Secret message: asdfal@#$DASD";
 //    }
 
     @GetMapping(path="/{employeeId}")
-    public EmployeeDTO getEmployeeById(@PathVariable(name= "employeeId") Long id)
+    public EmployeeEntity getEmployeeById(@PathVariable(name= "employeeId") Long id)
     {
-        return new EmployeeDTO(id, "Priyesh", 25, "Priyesh@gmail.com", LocalDate.of(2024,02,03),true);
+        return employeeRepository.findById(id).orElse(null);
     }
 
     @GetMapping
-    public String  getAllEmployee(@RequestParam (required = false) int age)
+    public List<EmployeeEntity>  getAllEmployee(@RequestParam (required = false) Integer age)
     {
-        return "Hi age is :"+age;
+        return employeeRepository.findAll();
     }
 
     @PostMapping
-    public EmployeeDTO createNewEmployee(@RequestBody EmployeeDTO inputEmployee)
+    public EmployeeEntity createNewEmployee(@RequestBody EmployeeEntity inputEmployee)
     {
-        inputEmployee.setId(200L);
-        return inputEmployee;
+        return employeeRepository.save(inputEmployee);
     }
 }
 
