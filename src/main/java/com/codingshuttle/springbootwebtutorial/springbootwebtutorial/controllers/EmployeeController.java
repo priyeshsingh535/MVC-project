@@ -3,6 +3,7 @@ package com.codingshuttle.springbootwebtutorial.springbootwebtutorial.controller
 
 import com.codingshuttle.springbootwebtutorial.springbootwebtutorial.dto.EmployeeDTO;
 import com.codingshuttle.springbootwebtutorial.springbootwebtutorial.entities.EmployeeEntity;
+import com.codingshuttle.springbootwebtutorial.springbootwebtutorial.exceptions.ResourceNotFoundException;
 import com.codingshuttle.springbootwebtutorial.springbootwebtutorial.repositories.EmployeeRepository;
 import com.codingshuttle.springbootwebtutorial.springbootwebtutorial.service.EmployeeService;
 import jakarta.validation.Valid;
@@ -23,18 +24,13 @@ public class EmployeeController {
         this.employeeService = employeeService;
     }
 
-    //    @GetMapping(path = "/getSecretMessage")
-//    public String getMySuperSecretMessage() {
-//        return "Secret message: asdfal@#$DASD";
-//    }
-
     @GetMapping(path="/{employeeId}")
     public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable(name= "employeeId") Long id)
     {
         Optional<EmployeeDTO> employeeDTO=employeeService.getEmployeeById(id);
         return employeeDTO
                 .map(employeeDTO1 -> ResponseEntity.ok(employeeDTO1))
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(()->new ResourceNotFoundException("Employee not found with id "+id));
     }
 
     @GetMapping
